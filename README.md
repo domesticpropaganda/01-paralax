@@ -19,7 +19,7 @@ npm install
 npm run dev
 ```
 
-## Adding images
+## Adding imagess
 
 Place images in `public/images/` and add entries to `src/artworks/manifest.json`:
 
