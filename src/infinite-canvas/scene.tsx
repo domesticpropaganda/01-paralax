@@ -499,6 +499,12 @@ export function InfiniteCanvasScene({
 }: InfiniteCanvasProps) {
   const isTouchDevice = useIsTouchDevice();
   const dpr = Math.min(window.devicePixelRatio || 1, isTouchDevice ? 1.25 : 1.5);
+  const [hintVisible, setHintVisible] = React.useState(false);
+
+  const handleScrollStart = React.useCallback(() => {
+    setHintVisible(true);
+    setTimeout(() => setHintVisible(false), 5000);
+  }, []);
 
   if (!media.length) {
     return null;
@@ -517,7 +523,7 @@ export function InfiniteCanvasScene({
         >
           <color attach="background" args={[backgroundColor]} />
           <fog attach="fog" args={[fogColor, fogNear, fogFar]} />
-          <SceneController media={media} onTextureProgress={onTextureProgress}autoScrollSpeed={autoScrollSpeed} planeScale={planeScale} planeDensity={planeDensity} planeSpread={planeSpread} />
+          <SceneController media={media} onTextureProgress={onTextureProgress} onScrollStart={handleScrollStart} autoScrollSpeed={autoScrollSpeed} planeScale={planeScale} planeDensity={planeDensity} planeSpread={planeSpread} />
           <EffectComposer multisampling={0}>
             <DepthOfField
               worldFocusDistance={dofWorldFocusDistance}
@@ -528,19 +534,22 @@ export function InfiniteCanvasScene({
           {showFps && <Stats className={styles.stats} />}
         </Canvas>
 
-{showControls && (
-          <div className={styles.controlsPanel}>
-            {isTouchDevice ? (
-              <>
-                <b>Drag</b> Pan · <b>Pinch</b> Zoom
-              </>
-            ) : (
-              <>
-                <b>WASD</b> Move · <b>QE</b> Up/Down · <b>Scroll/Space</b> Zoom
-              </>
-            )}
-          </div>
-        )}
+          {showControls && (
+            <div className={styles.controlsPanel}>
+              {isTouchDevice ? (
+                <>
+                  <b>Drag</b> Pan · <b>Pinch</b> Zoom
+                </>
+              ) : (
+                <>
+                  <b>WASD</b> Move · <b>QE</b> Up/Down · <b>Scroll/Space</b> Zoom
+                </>
+              )}
+            </div>
+          )}
+        </div>
+        <div className={`${styles.hint} ${hintVisible ? styles.hintVisible : ""}`}>
+          Use arrow keys to change direction · Press spacebar to toggle images
         </div>
       </div>
     </KeyboardControls>

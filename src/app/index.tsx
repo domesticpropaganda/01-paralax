@@ -28,7 +28,7 @@ const DEFAULTS: SceneParams = {
   fogFar: 320,
   dofWorldFocusDistance: 67,
   dofWorldFocusRange: 100,
-  dofBokehScale: 6,
+  dofBokehScale: 4,
   autoScrollSpeed: 0.35,
   planeScale: 3,
   planeDensity: 1,
@@ -42,6 +42,24 @@ const DEFAULTS: SceneParams = {
 
 export function App() {
   const [params, setParams] = React.useState<SceneParams>(DEFAULTS);
+  const modeControllerRef = React.useRef<{ getValue: () => string; setValue: (v: string) => void } | null>(null);
+  const paramsRef = React.useRef<SceneParams>(DEFAULTS);
+
+  React.useEffect(() => {
+    paramsRef.current = params;
+  }, [params]);
+
+  React.useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code !== "Space") return;
+      e.preventDefault();
+      const next = paramsRef.current.mode === "default" ? "minimal" : "default";
+      setParams((p) => ({ ...p, mode: next }));
+      modeControllerRef.current?.setValue(next);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   const media = React.useMemo(() => {
     const colorOverrides = [params.color0, params.color1, params.color2, params.color3];
@@ -81,7 +99,7 @@ export function App() {
     scroll.add(p, "autoScrollSpeed", 0, 2, 0.01).name("Speed").onChange(update);
 
     const images = gui.addFolder("Images");
-    images.add(p, "mode", { Default: "default", Minimal: "minimal" }).name("Mode").onChange(update);
+    modeControllerRef.current = images.add(p, "mode", { Default: "default", Minimal: "minimal" }).name("Mode").onChange(update);
     images.add(p, "planeScale", 0.25, 3, 0.05).name("Scale").onChange(update);
     images.add(p, "planeDensity", 1, 15, 1).name("Density").onChange(update);
     images.add(p, "planeSpread", 0.3, 2, 0.05).name("Spread").onChange(update);
