@@ -1,0 +1,58 @@
+/** biome-ignore-all lint/complexity/noImportantStyles: who cares! */
+
+/* Full-viewport centering wrapper */
+.wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 8:1 aspect-ratio canvas container */
+.container {
+  aspect-ratio: 8 / 1;
+  width: min(100vw, calc(100vh * 8));
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  touch-action: none;
+}
+
+.infoPanel {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  border-radius: 8px;
+  background-color: #ffffff;
+  padding: 12px;
+  font-size: 60%;
+  color: #000000;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.controlsPanel {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 10;
+  border-radius: 8px;
+  background-color: #ffffff;
+  padding: 12px;
+  color: #000000;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.stats {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  left: auto !important;
+}
