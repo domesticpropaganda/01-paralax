@@ -325,6 +325,7 @@ const createInitialState = (camZ: number): ControllerState => ({
 function SceneController({
   media,
   onTextureProgress,
+  onScrollStart,
   autoScrollSpeed = DEFAULT_SCROLL_SPEED,
   planeScale = 1,
   planeDensity = 5,
@@ -332,6 +333,7 @@ function SceneController({
 }: {
   media: MediaItem[];
   onTextureProgress?: (progress: number) => void;
+  onScrollStart?: () => void;
   autoScrollSpeed?: number;
   planeScale?: number;
   planeDensity?: number;
@@ -344,6 +346,8 @@ function SceneController({
   const cameraGridRef = React.useRef<CameraGridState>({ cx: 0, cy: 0, cz: 0, camZ: INITIAL_CAMERA_Z, globalOpacity: 0 });
 
   // velX/velZ: scroll direction unit vector, set by arrow keys
+  const scrollStartFired = React.useRef(false);
+
   const introRef = React.useRef<{ phase: "intro" | "scroll"; velX: number; velZ: number; startTime: number; scrollStartTime: number }>(
     Math.random() < 0.5
       ? { phase: "intro", velX: 1, velZ: 0, startTime: -1, scrollStartTime: -1 }
@@ -376,7 +380,13 @@ function SceneController({
       const t = Math.min((now - intro.startTime) / INTRO_DURATION, 1);
       const eased = t * t; // ease-in: slow appear, then faster
 
-      if (t >= 1) intro.phase = "scroll";
+      if (t >= 1) {
+        intro.phase = "scroll";
+        if (!scrollStartFired.current) {
+          scrollStartFired.current = true;
+          onScrollStart?.();
+        }
+      }
 
       const cx = Math.floor(s.basePos.x / CHUNK_SIZE);
       const cy = Math.floor(s.basePos.y / CHUNK_SIZE);
@@ -496,7 +506,7 @@ export function InfiniteCanvasScene({
 
   return (
     <KeyboardControls map={KEYBOARD_MAP}>
-      <div className={styles.wrapper} style={{ background: backgroundColor }}>
+      <div className={styles.wrapper}>
         <div className={styles.container}>
         <Canvas
           camera={{ position: [0, 0, INITIAL_CAMERA_Z], fov: cameraFov, near: cameraNear, far: cameraFar }}
@@ -507,7 +517,7 @@ export function InfiniteCanvasScene({
         >
           <color attach="background" args={[backgroundColor]} />
           <fog attach="fog" args={[fogColor, fogNear, fogFar]} />
-          <SceneController media={media} onTextureProgress={onTextureProgress} autoScrollSpeed={autoScrollSpeed} planeScale={planeScale} planeDensity={planeDensity} planeSpread={planeSpread} />
+          <SceneController media={media} onTextureProgress={onTextureProgress}autoScrollSpeed={autoScrollSpeed} planeScale={planeScale} planeDensity={planeDensity} planeSpread={planeSpread} />
           <EffectComposer multisampling={0}>
             <DepthOfField
               worldFocusDistance={dofWorldFocusDistance}
@@ -518,7 +528,7 @@ export function InfiniteCanvasScene({
           {showFps && <Stats className={styles.stats} />}
         </Canvas>
 
-        {showControls && (
+{showControls && (
           <div className={styles.controlsPanel}>
             {isTouchDevice ? (
               <>

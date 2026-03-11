@@ -26,13 +26,13 @@ const DEFAULTS: SceneParams = {
   backgroundColor: "#222222",
   fogNear: 120,
   fogFar: 320,
-  dofWorldFocusDistance: 45,
-  dofWorldFocusRange: 60,
+  dofWorldFocusDistance: 67,
+  dofWorldFocusRange: 100,
   dofBokehScale: 6,
   autoScrollSpeed: 0.35,
   planeScale: 3,
   planeDensity: 1,
-  planeSpread: 1,
+  planeSpread: 2,
   mode: "default" as const,
   color0: "#3ABF64",
   color1: "#6C28FF",
@@ -102,7 +102,7 @@ export function App() {
         a.click();
       },
     }, "exportPng").name("Export PNG");
-
+gui.close();
     return () => gui.destroy();
   }, []);
 
