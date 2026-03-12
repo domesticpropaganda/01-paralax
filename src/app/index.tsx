@@ -28,7 +28,7 @@ const DEFAULTS: SceneParams = {
   fogFar: 320,
   dofWorldFocusDistance: 67,
   dofWorldFocusRange: 100,
-  dofBokehScale: 4,
+  dofBokehScale: 3,
   autoScrollSpeed: 0.35,
   planeScale: 3,
   planeDensity: 1,
